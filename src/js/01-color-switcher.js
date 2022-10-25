@@ -3,13 +3,18 @@
 const startBtn = document.querySelector('button[data-start]');
 const stopBtn = document.querySelector('button[data-stop]');
 const body = document.querySelector('body');
-const intervalId = setInterval(startChangeBodyColor, 1000);
+let intervalId = null;
 startBtn.addEventListener('click', startChangeBodyColor);
 stopBtn.addEventListener('click', stopChangeBodyColor);
 
 function startChangeBodyColor() {
-  const rndCol = getRandomHexColor();
-  body.style.backgroundColor = rndCol;
+  if (intervalId) {
+    return;
+  }
+  intervalId = setInterval(() => {
+    const rndCol = getRandomHexColor();
+    body.style.backgroundColor = rndCol;
+  }, 1000);
 }
 
 function stopChangeBodyColor() {
