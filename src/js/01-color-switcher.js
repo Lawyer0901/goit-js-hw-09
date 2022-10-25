@@ -3,6 +3,7 @@
 const startBtn = document.querySelector('button[data-start]');
 const stopBtn = document.querySelector('button[data-stop]');
 const body = document.querySelector('body');
+const PROMPT_DELAY = 1000;
 let intervalId = null;
 startBtn.addEventListener('click', startChangeBodyColor);
 stopBtn.addEventListener('click', stopChangeBodyColor);
@@ -14,7 +15,7 @@ function startChangeBodyColor() {
   intervalId = setInterval(() => {
     const rndCol = getRandomHexColor();
     body.style.backgroundColor = rndCol;
-  }, 1000);
+  }, PROMPT_DELAY);
 }
 
 function stopChangeBodyColor() {
