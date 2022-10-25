@@ -7,10 +7,10 @@ const PROMPT_DELAY = 1000;
 let intervalId = null;
 startBtn.addEventListener('click', startChangeBodyColor);
 stopBtn.addEventListener('click', stopChangeBodyColor);
-
+console.dir(startBtn);
 function startChangeBodyColor() {
   if (intervalId) {
-    return;
+    startBtn.disabled = true;
   }
   intervalId = setInterval(() => {
     const rndCol = getRandomHexColor();
@@ -20,6 +20,7 @@ function startChangeBodyColor() {
 
 function stopChangeBodyColor() {
   clearInterval(intervalId);
+  startBtn.disabled = false;
 }
 
 function getRandomHexColor() {
