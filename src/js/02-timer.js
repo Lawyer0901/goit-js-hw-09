@@ -2,9 +2,8 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import Notiflix from 'notiflix';
 
-// Напиши скрипт таймера, который ведёт обратный отсчет до определенной даты. Такой таймер может использоваться в блогах и интернет-магазинах, страницах регистрации событий, во время технического обслуживания и т. д.
 const inputDayTime = document.querySelector('#datetime-picker');
-console.dir(inputDayTime);
+
 const refs = {
   btnStart: document.querySelector('[data-start]'),
   days: document.querySelector('[data-days]'),
@@ -19,10 +18,17 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
+    refs.btnStart.disabled = true;
+    if (selectedDates === selectedDates[0]) {
+    } else {
+      Notiflix.Notify.warning('Please choose a date in the future');
+    }
     console.log(selectedDates[0]);
   },
 };
-
+function pad(value) {
+  return String(value).padStart(2, 0);
+}
 function convertMs(ms) {
   // Number of milliseconds per unit of time
   const second = 1000;
@@ -31,13 +37,13 @@ function convertMs(ms) {
   const day = hour * 24;
 
   // Remaining days
-  const days = Math.floor(ms / day);
+  const days = pad(Math.floor(ms / day));
   // Remaining hours
-  const hours = Math.floor((ms % day) / hour);
+  const hours = pad(Math.floor((ms % day) / hour));
   // Remaining minutes
-  const minutes = Math.floor(((ms % day) % hour) / minute);
+  const minutes = pad(Math.floor(((ms % day) % hour) / minute));
   // Remaining seconds
-  const seconds = Math.floor((((ms % day) % hour) % minute) / second);
+  const seconds = pad(Math.floor((((ms % day) % hour) % minute) / second));
 
   return { days, hours, minutes, seconds };
 }
