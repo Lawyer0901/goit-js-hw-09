@@ -4,7 +4,9 @@ const startBtn = document.querySelector('button[data-start]');
 const stopBtn = document.querySelector('button[data-stop]');
 const body = document.querySelector('body');
 const PROMPT_DELAY = 1000;
+
 let intervalId = null;
+
 startBtn.addEventListener('click', startChangeBodyColor);
 stopBtn.addEventListener('click', stopChangeBodyColor);
 
