@@ -11,6 +11,25 @@ const refs = {
   minutes: document.querySelector('[data-minutes]'),
   seconds: document.querySelector('[data-seconds]'),
 };
+refs.btnStart.addEventListener('click', stratToCountBackTime);
+
+const timer = {
+  isActive: false,
+  start() {
+    if (this.isActive) {
+      return;
+    }
+    const sartTime = Date.now();
+    this.isActive = true;
+    setInterval(() => {
+      const currentTime = Date.now();
+      const deltaTime = currentTime - sartTime;
+      const time = convertMs(deltaTime);
+      updateTimerClockFace(time);
+      //   console.log(`${days}:${hours}:${minutes}:${seconds}`);
+    }, 1000);
+  },
+};
 
 const options = {
   enableTime: true,
@@ -18,9 +37,8 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    refs.btnStart.disabled = true;
-    if (selectedDates === selectedDates[0]) {
-    } else {
+    console.log(selectedDates);
+    if (!selectedDates) {
       Notiflix.Notify.warning('Please choose a date in the future');
     }
     console.log(selectedDates[0]);
@@ -50,9 +68,14 @@ function convertMs(ms) {
 
 flatpickr(inputDayTime, options);
 
-refs.btnStart.addEventListener('click', stratToCountBackTime);
-
 function stratToCountBackTime(evt) {
+  timer.start();
   console.log(evt.target);
 }
-console.log(inputDayTime.textContent);
+
+function updateTimerClockFace({ days, hours, minutes, seconds }) {
+  refs.days.textContent = `${days}`;
+  refs.hours.textContent = `${hours}`;
+  refs.minutes.textContent = `${minutes}`;
+  refs.seconds.textContent = `${seconds}`;
+}
