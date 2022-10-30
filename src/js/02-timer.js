@@ -2,7 +2,7 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import Notiflix from 'notiflix';
 
-// 1. Надо в функции вывода модалки описать текущую дату (selectedDates < текущей), и что ранняя дата это не правильно.
+// 1. Надо в функции вывода модалки описать текущую дату (selectedDates < текущей), и что ранняя дата это не правильно. (DONE!!)
 // 2. Надо определить как в text.Content рефов присваивать разницу между выбраной датой и текущей
 // 3. Надо определить как таймер запустить в обратную сторону.
 // 4. Когда text.Content рефов = 00 то надо таймер остановить clearInterval(this.intervalId)
@@ -43,16 +43,29 @@ const options = {
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
+
   //   Функция вызывающая модалку ошибки выбра даты
   onClose(selectedDates) {
     const currentTime = Date.now();
-    // console.log(selectedDates);
+    const inputTime = selectedDates[0].getTime() - Date.now();
+    console.log(inputTime);
+
+    const func = convertMs(inputTime);
+    console.log(func);
+
     if (selectedDates[0] < currentTime) {
       Notiflix.Notify.warning('Please choose a date in the future');
     }
-    // console.log(selectedDates[0].getTime() - currentTime);
+
+    const { days, hours, minutes, seconds } = func;
+
+    refs.days.textContent = `${days}`;
+    refs.hours.textContent = `${hours}`;
+    refs.minutes.textContent = `${minutes}`;
+    refs.seconds.textContent = `${seconds}`;
   },
 };
+
 // Eventlistener on button sart
 
 refs.btnStart.addEventListener('click', stratToCountBackTime);
@@ -62,7 +75,7 @@ flatpickr(inputDayTime, options);
 
 // Добавляет ноль перед цифрой, если его нет
 function pad(value) {
-  return String(value).padStart(2, 0);
+  return String(value).padStart(2, '0');
 }
 
 // Возвращает объек из дней часов минут и секунд
@@ -80,9 +93,7 @@ function convertMs(ms) {
   // Remaining minutes
   const minutes = pad(Math.floor(((ms % day) % hour) / minute));
   // Remaining seconds
-  const seconds = pad(
-    Math.floor((((ms % day) % hour) % minute) / second) - second
-  );
+  const seconds = pad(Math.floor((((ms % day) % hour) % minute) / second));
 
   return { days, hours, minutes, seconds };
 }
@@ -95,12 +106,3 @@ function stratToCountBackTime() {
 }
 
 // Присваивает значение дням часам минутам и секундам
-function updateTimerClockFace({ days, hours, minutes, seconds }) {
-  refs.days.textContent = `${days}`;
-  refs.hours.textContent = `${hours}`;
-  refs.minutes.textContent = `${minutes}`;
-  refs.seconds.textContent = `${seconds}`;
-}
-
-console.dir(flatpickr.selectedDates);
-// console.log(selectedDates.getTime());
