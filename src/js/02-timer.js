@@ -2,9 +2,10 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import Notiflix from 'notiflix';
 
-// 1. Надо в функции вывода модалки описать текущую дату (selectedDates < текущей), и что ранняя дата это не правильно. (DONE!!)
-// 2. Надо определить как в text.Content рефов присваивать разницу между выбраной датой и текущей
-// 3. Надо определить как таймер запустить в обратную сторону.
+// 1. Надо в функции вывода модалки описать текущую дату (selectedDates < текущей), и что ранняя дата это не правильно. (DONE)
+// 2. Надо определить как в text.Content рефов присваивать разницу между выбраной датой и текущей (DONE)
+// 2.1 Нужна проверка: Если разница между текущей датой и выбранной меньше 0, то в textContent рефов присваивается 00 (DONE)
+// 3. Надо определить как отсчет таймера запустить в обратную сторону.
 // 4. Когда text.Content рефов = 00 то надо таймер остановить clearInterval(this.intervalId)
 
 const inputDayTime = document.querySelector('#datetime-picker');
@@ -27,11 +28,11 @@ const timer = {
     const sartTime = Date.now();
     this.isActive = true;
     this.intervalId = setInterval(() => {
-      const currentTime = Date.now();
-      const deltaTime = currentTime - sartTime;
-      const timeData = convertMs(deltaTime);
-      console.log(deltaTime);
-      updateTimerClockFace(timeData);
+      // const currentTime = Date.now();
+      // const deltaTime = currentTime - sartTime;
+      // const timeData = convertMs(deltaTime);
+      console.log(sartTime);
+      // updateTimerClockFace(timeData);
     }, 1000);
   },
 };
@@ -45,24 +46,28 @@ const options = {
   minuteIncrement: 1,
 
   //   Функция вызывающая модалку ошибки выбра даты
+
   onClose(selectedDates) {
     const currentTime = Date.now();
     const inputTime = selectedDates[0].getTime() - Date.now();
-    console.log(inputTime);
 
     const func = convertMs(inputTime);
-    console.log(func);
+    console.log('funk -->', func);
 
     if (selectedDates[0] < currentTime) {
       Notiflix.Notify.warning('Please choose a date in the future');
     }
 
-    const { days, hours, minutes, seconds } = func;
-
-    refs.days.textContent = `${days}`;
-    refs.hours.textContent = `${hours}`;
-    refs.minutes.textContent = `${minutes}`;
-    refs.seconds.textContent = `${seconds}`;
+    // Проверка если разница между текущей датой и выбранной меньше 0, то в textContent рефов присваивается 00
+    if (inputTime < 0) {
+      return;
+    } else {
+      const { days, hours, minutes, seconds } = func;
+      refs.days.textContent = `${days}`;
+      refs.hours.textContent = `${hours}`;
+      refs.minutes.textContent = `${minutes}`;
+      refs.seconds.textContent = `${seconds}`;
+    }
   },
 };
 
@@ -98,7 +103,7 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-// Принажатии кнопки старт начинаеться отсчет таймера
+// При нажатии кнопки старт начинаеться отсчет таймера
 function stratToCountBackTime() {
   timer.start();
 
@@ -106,3 +111,16 @@ function stratToCountBackTime() {
 }
 
 // Присваивает значение дням часам минутам и секундам
+
+// function updateTimerClockFace({ days, hours, minutes, seconds }) {
+//   const inputTime = selectedDates[0].getTime() - Date.now();
+//   if (inputTime < 0) {
+//     return;
+//   } else {
+//     // const { days, hours, minutes, seconds } = func;
+//     refs.days.textContent = `${days}`;
+//     refs.hours.textContent = `${hours}`;
+//     refs.minutes.textContent = `${minutes}`;
+//     refs.seconds.textContent = `${seconds}`;
+//   }
+// }
