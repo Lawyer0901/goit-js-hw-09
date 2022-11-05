@@ -5,7 +5,7 @@ import Notiflix from 'notiflix';
 // // 1. Надо в функции вывода модалки описать текущую дату (selectedDates < текущей), и что ранняя дата это не правильно. (DONE)
 // // 2. Надо определить как в text.Content рефов присваивать разницу между выбраной датой и текущей (DONE)
 // // 2.1 Нужна проверка: Если разница между текущей датой и выбранной меньше 0, то в textContent рефов присваивается 00 (DONE)
-// // 3. Надо определить как отсчет таймера запустить в обратную сторону.
+// // 3. Надо определить как отсчет таймера запустить в обратную сторону. (DONE)
 // // 4. Когда text.Content рефов = 00 то надо таймер остановить clearInterval(this.intervalId)
 
 const inputDayTime = document.querySelector('#datetime-picker');
@@ -20,32 +20,11 @@ const refs = {
 
 const timer = {
   isActive: false,
-  intervalId: null,
   start() {
     if (this.isActive) {
       return;
     }
-    const sartTime = Date.now();
-
     this.isActive = true;
-    this.intervalId = setInterval(() => {
-      const currentTime = Date.now();
-
-      let deltaTime = currentTime - sartTime;
-
-      const timeData = convertMs(deltaTime);
-      console.log(timeData);
-
-      refs.days.textContent = timeData.days;
-      refs.hours.textContent = timeData.hours;
-      refs.minutes.textContent = timeData.minutes;
-      refs.seconds.textContent = timeData.seconds;
-
-      if (deltaTime === 0) {
-        clearInterval(this.timerId);
-        return;
-      }
-    }, 1000);
   },
 };
 
@@ -60,31 +39,32 @@ const options = {
   //   Функция вызывающая модалку ошибки выбра даты
 
   onClose(selectedDates) {
+    let intervalId = null;
     const currentTime = Date.now();
-    const inputTime = selectedDates[0].getTime() - Date.now();
-
-    const time = convertMs(inputTime);
 
     if (selectedDates[0] < currentTime) {
-      Notiflix.Notify.warning('Please choose a date in the future');
+      Notiflix.Notify.failure('Please choose a date in the future');
     }
+    intervalId = setInterval(() => {
+      const inputTime = selectedDates[0].getTime() - Date.now();
 
-    // Проверка если разница между текущей датой и выбранной меньше 0, то в textContent рефов присваивается 00
-    if (inputTime < 0) {
-      return;
-    } else {
-      const { days, hours, minutes, seconds } = time;
-      refs.days.textContent = `${days}`;
-      refs.hours.textContent = `${hours}`;
-      refs.minutes.textContent = `${minutes}`;
-      refs.seconds.textContent = `${seconds}`;
-    }
+      const time = convertMs(inputTime);
 
-    // if (inputTime) {
-    //   refs.btnStart.disabled = false;
-    // } else {
-    //   refs.btnStart.disabled = true;
-    // }
+      // Проверка если разница между текущей датой и выбранной меньше 0, то в textContent рефов присваивается 00
+      if (inputTime < 0) {
+        return;
+      } else {
+        const { days, hours, minutes, seconds } = time;
+        refs.days.textContent = `${days}`;
+        refs.hours.textContent = `${hours}`;
+        refs.minutes.textContent = `${minutes}`;
+        refs.seconds.textContent = `${seconds}`;
+      }
+
+      if (time === 0) {
+        clearInterval(intervalId);
+      }
+    }, 1000);
   },
 };
 
