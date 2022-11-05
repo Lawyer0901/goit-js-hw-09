@@ -26,24 +26,25 @@ const timer = {
       return;
     }
     const sartTime = Date.now();
-    // console.log(sartTime);
+
     this.isActive = true;
     this.intervalId = setInterval(() => {
-      let currentTime = Date.now();
-      // console.log(currentTime);
-      let deltaTime = currentTime - sartTime;
-      // console.log(deltaTime);
+      const currentTime = Date.now();
 
-      const func = convertMs(deltaTime);
-      // console.log(deltaTime);
-      let timeData = func;
+      let deltaTime = currentTime - sartTime;
+
+      const timeData = convertMs(deltaTime);
       console.log(timeData);
 
       refs.days.textContent = timeData.days;
       refs.hours.textContent = timeData.hours;
       refs.minutes.textContent = timeData.minutes;
       refs.seconds.textContent = timeData.seconds;
-      currentTime -= 1;
+
+      if (deltaTime === 0) {
+        clearInterval(this.timerId);
+        return;
+      }
     }, 1000);
   },
 };
@@ -61,9 +62,8 @@ const options = {
   onClose(selectedDates) {
     const currentTime = Date.now();
     const inputTime = selectedDates[0].getTime() - Date.now();
-    let countTimerBack = inputTime;
-    console.log(countTimerBack);
-    const func = convertMs(inputTime);
+
+    const time = convertMs(inputTime);
 
     if (selectedDates[0] < currentTime) {
       Notiflix.Notify.warning('Please choose a date in the future');
@@ -73,17 +73,18 @@ const options = {
     if (inputTime < 0) {
       return;
     } else {
-      const { days, hours, minutes, seconds } = func;
+      const { days, hours, minutes, seconds } = time;
       refs.days.textContent = `${days}`;
       refs.hours.textContent = `${hours}`;
       refs.minutes.textContent = `${minutes}`;
       refs.seconds.textContent = `${seconds}`;
     }
-    if (inputTime) {
-      refs.btnStart.disabled = false;
-    } else {
-      refs.btnStart.disabled = true;
-    }
+
+    // if (inputTime) {
+    //   refs.btnStart.disabled = false;
+    // } else {
+    //   refs.btnStart.disabled = true;
+    // }
   },
 };
 
@@ -121,9 +122,5 @@ function convertMs(ms) {
 
 // При нажатии кнопки старт начинаеться отсчет таймера
 function stratToCountBackTime() {
-  // console.log(evt.target.textContent);
   timer.start();
-  // if (00) {
-  //   clearInterval(intervalId);
-  // }
 }
